@@ -16,6 +16,7 @@ struct Player {
 
 void explainRules();
 void shuffleArray(int arr[], int n);
+bool stringInArray(string arr[], string str, int len);
 
 int main() {
     // Get number of players
@@ -35,11 +36,12 @@ int main() {
         cin >> answer;
     }
     if (answer == "s")
-        hideScreen = "\n\n\n\n\n\n\n\n\n";
-    else if (answer == "m")
         hideScreen = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+    else if (answer == "m")
+        hideScreen = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
     else
-        hideScreen = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+        hideScreen = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
+        \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 
     // Explain rules if necessary
     answer = "";
@@ -54,12 +56,17 @@ int main() {
     cout << endl;
 
     // Get names from user
+    string names[numPlayers];
     Player players[numPlayers];
-    for (int i = 0; i < numPlayers; i++) {
-        cout << "Player " << i + 1 << " name: ";
+    for (int i = 1; i <= numPlayers; i++) {
+        cout << "Player " << i << " name: ";
         answer = "";
-        cin >> answer;
-        players[i].name = answer;
+        // If name is already used, prompt user again
+        do {
+            cin >> answer;
+        } while (stringInArray(names, answer, i));
+        names[i-1] = answer;
+        players[i-1].name = answer;
     }
     this_thread::sleep_for(chrono::seconds(1));
     cout << endl;
@@ -133,6 +140,7 @@ int main() {
     }
     cout << hideScreen;
     cout << "So it begins..";
+    cout.flush();
     this_thread::sleep_for(chrono::seconds(2));
     cout << " trust no one." << endl << endl;
     this_thread::sleep_for(chrono::seconds(2));
@@ -153,9 +161,15 @@ int main() {
             cout << players[j].name << " ";
         }
         cout << endl;
+        
         string playerSecuring[numSecure[i]];
         for (int j = 0; j < numSecure[i]; j++) {
-            cin >> playerSecuring[j];
+            // If given name is not in names or already picked, prompt user again
+            answer = "";
+            do {
+            cin >> answer;
+            } while (!stringInArray(names, answer, numPlayers) || stringInArray(playerSecuring, answer, j+1));
+            playerSecuring[j] = answer;
         }
         // Mission Phase
         cout << "May those chosen keep us safe." << endl;
@@ -263,40 +277,46 @@ int main() {
 }
 
 void explainRules() {
-    cout << "Each player is randomly chosen to be a member of one of two factions, town and mafia." << endl;
-    this_thread::sleep_for(chrono::seconds(5));
-    cout << "Town is the majority and wants to secure the village." << endl;
+    this_thread::sleep_for(chrono::seconds(1));
+    cout << "Each player is randomly chosen to be a member of one of two factions, town and mafia.";
+    cout.flush();
     this_thread::sleep_for(chrono::seconds(3));
-    cout << "The village is secured when there are no killings that round. Keep suspected mafia off the patrol!" << endl;
-    this_thread::sleep_for(chrono::seconds(4));
-    cout << "The mafia are the minority, with a lust for chaos and blood. They must undermine the people." << endl;
-    this_thread::sleep_for(chrono::seconds(5));
-    cout << "Town is unaware of anyone else's role, while the mafia know." << endl;
+    cout << endl << "Town is the majority and wants to secure the village.";
     this_thread::sleep_for(chrono::seconds(3));
-    cout << "There are 2 mafiosos in 5-6 player matches, and 3 in 7-8 player ones." << endl;
-    this_thread::sleep_for(chrono::seconds(5));
-    cout << "5 rounds are played, or until a faction achieves their goal in 3 rounds." << endl;
+    cout << endl << "The village is secured when there are no killings that round. Keep suspected mafia off the patrol!";
     this_thread::sleep_for(chrono::seconds(4));
-    cout << endl << "Each round has two phases: the talking phase, and the mission phase." << endl;
-    this_thread::sleep_for(chrono::seconds(5));
-    cout << "Talking phase:" << endl;
-    cout << "The players must discuss who they want to secure the town that round." << endl;
-    this_thread::sleep_for(chrono::seconds(5));
-    cout << "Discussion occurs until a majority is reached and a decision is made." << endl;
-    this_thread::sleep_for(chrono::seconds(5));
-    cout << "Mission phase:" << endl;
-    cout << "Each player takes their turn. Town cannot do anything except continue and appear inconspicious!" << endl;
-    this_thread::sleep_for(chrono::seconds(5));
-    cout << "When chosen to secure the town, the mafia can either kill, or decline to do so, going under the radar." << endl;
-    this_thread::sleep_for(chrono::seconds(5));
-    cout << "Otherwise, the mafia cannot take an action either." << endl;
+    cout << endl << "The mafia are the minority, with a lust for chaos and blood. They must undermine the people.";
+    this_thread::sleep_for(chrono::seconds(4));
+    cout << endl << "Town is unaware of anyone else's role, while the mafia know.";
     this_thread::sleep_for(chrono::seconds(3));
-    cout << "It is extremely important for the town to figure out the truth." << endl;
+    cout << endl << "There are 2 mafiosos in 5-6 player matches, and 3 in 7-8 player ones.";
     this_thread::sleep_for(chrono::seconds(4));
-    cout << "If public discourse is infiltrated, the interloper will cause mayhem without fail." << endl;
+    cout << endl << "5 rounds are played, or until a faction achieves their goal in 3 rounds.";
     this_thread::sleep_for(chrono::seconds(4));
-    cout << "Good luck...." << endl;
+    cout << endl << endl << "Each round has two phases: the talking phase, and the mission phase.";
     this_thread::sleep_for(chrono::seconds(3));
+    cout << endl << "Talking phase:";
+    this_thread::sleep_for(chrono::seconds(1));
+    cout << endl << "Players discuss who will be chosen secure the town that round.";
+    this_thread::sleep_for(chrono::seconds(3));
+    cout << endl << "The town wants to keep suspected mafia off the patrol to avoid killings.";
+    this_thread::sleep_for(chrono::seconds(3));
+    cout << endl << "Discussion occurs until a majority is reached and a decision is made.";
+    this_thread::sleep_for(chrono::seconds(3));
+    cout << endl << "Mission phase:";
+    this_thread::sleep_for(chrono::seconds(1));
+    cout << endl << "Each player takes their turn. Town cannot do anything except continue and appear inconspicious!";
+    this_thread::sleep_for(chrono::seconds(4));
+    cout << endl << "When chosen to secure the town, the mafia can either kill, or decline to do so, going under the radar.";
+    this_thread::sleep_for(chrono::seconds(5));
+    cout << endl << "Otherwise, the mafia cannot take an action either.";
+    this_thread::sleep_for(chrono::seconds(2));
+    cout << endl << "It is extremely important for the town to figure out the truth.";
+    this_thread::sleep_for(chrono::seconds(3));
+    cout << endl << "If public discourse is infiltrated, the interloper will wreak havoc without fail.";
+    this_thread::sleep_for(chrono::seconds(4));
+    cout << endl << "Good luck...." << endl; 
+    this_thread::sleep_for(chrono::seconds(2));
 }
 
 // Create seed in main before usage
@@ -310,4 +330,12 @@ void shuffleArray(int arr[], int n) {
         arr[i] = arr[randomIndex];
         arr[randomIndex] = temp;
     }
+}
+
+bool stringInArray(string arr[], string str, int len) {
+    for (int i = 0; i < len; i++) {
+        if (arr[i] == str) 
+            return true;
+    }
+    return false;
 }
