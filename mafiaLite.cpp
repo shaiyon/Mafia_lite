@@ -8,7 +8,7 @@
 using namespace std;
 
 // Useful data structures
-enum faction { MAFIA, TOWN };
+enum faction { TOWN, MAFIA };
 struct Player {
     string name;
     faction role;
@@ -23,17 +23,25 @@ int main() {
     cout << "Welcome to mafiaLite" << endl << endl; 
     this_thread::sleep_for(chrono::seconds(1));
     cout << "Number of players: (5-8) ";
+    string answer = "";
     int numPlayers = 0;
     while (numPlayers < 5 || numPlayers > 8) {
         cin >> numPlayers;
+        if (cin.fail() || numPlayers < 5 || numPlayers > 8) {
+            cin.clear();
+            cin.ignore();
+            cout << "Enter a valid number! ";
+        }
     }
-
+    
     // Get screen size for hiding role reveals and turns
-    string answer = "";
+    answer = "";
     string hideScreen = "";
     cout << "How big is your terminal window? (s/m/l) ";
     while (answer != "s" && answer != "m" && answer != "l") {
         cin >> answer;
+        if (answer != "s" && answer != "m" && answer != "l")
+            cout << "Enter a valid answer! ";
     }
     if (answer == "s")
         hideScreen = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
@@ -63,6 +71,8 @@ int main() {
         // If name is already used, prompt user again
         do {
             cin >> answer;
+            if (stringInArray(names, answer, i))
+                cout << "Enter a name not already used! ";
         } while (stringInArray(names, answer, i));
         names[i-1] = answer;
         players[i-1].name = answer;
@@ -123,7 +133,7 @@ int main() {
             cout << hideScreen;
         cout << players[i].name << ", are you ready to see your role? (y) ";
         answer = "";
-        while (!(answer == "y")) {
+        while (answer != "y") {
             cin >> answer;
         }
         if (players[i].role == MAFIA) {
@@ -154,7 +164,6 @@ int main() {
         // Talking Phase
         cout << "Pick " << numSecure[i] << " players to secure the town. Discuss and reach a consensus." << endl;
         this_thread::sleep_for(chrono::seconds(5));
-        // Voting Phase
         cout << "Who will it be?" << endl;
         for (int j = 0; j < numPlayers; j++) {
             cout << players[j].name << " ";
@@ -261,14 +270,20 @@ int main() {
         // Check for win condition at end of each round
         if (numKilled == 3) {
             cout << "The rampage has gone too far!" << endl;
+            this_thread::sleep_for(chrono::seconds(2));
             cout << "Triumphant the mafia stands." << endl;
+            this_thread::sleep_for(chrono::seconds(2));
             cout << "A dark day for citizens everywhere.";
+            this_thread::sleep_for(chrono::seconds(15));
             exit(0);
         }
         else if (numSecured == 3) {
             cout << "Order has been enforced in the village!" << endl;
+            this_thread::sleep_for(chrono::seconds(2));
             cout << "The scourge has been driven out," << endl;
+            this_thread::sleep_for(chrono::seconds(2));
             cout << "Thus, victory for the plebeians.";
+            this_thread::sleep_for(chrono::seconds(15));
             exit(0);
         }
     }
