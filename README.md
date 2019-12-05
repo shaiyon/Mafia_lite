@@ -2,4 +2,4 @@
 
 README under construction
 
-Download link (windows): https://www.dropbox.com/s/xoq5vjbllhgwdho/mafiaLite.exe?dl=0
+Download link (windows): https://www.dropbox.com/s/vjcux7d1fdr8q8r/mafiaLite.exe?dl=0
